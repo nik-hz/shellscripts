@@ -9,6 +9,7 @@ usage() {
     echo ""
     echo "Options:"
     echo "  -h, --help  show this help message and exit"
+    echo "  -m, --message  add a custom commit message"
     echo ""
     echo "Arguments:"
     echo "  <commit_message>  optional commit message for the changes"
