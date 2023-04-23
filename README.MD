@@ -9,7 +9,7 @@ Run any exe with -h to see instructions
 ## Executables 
 
 ### gits
-Three line executable that does git add, commit and push, adds 'from gits' if you give no input, otherwise you can run with custom message
+Three line executable that does git add, commit and push, adds 'edited < last edited file > at < time >' for all edited files if you give no input, otherwise you can provide a custom message.
 
 ```
 Usage: git-push [-h] [ -m <commit_message>]
