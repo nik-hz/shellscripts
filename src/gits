@@ -47,6 +47,14 @@ if [ -z "$upstream" ]; then
     echo "Added upstream remote"
 fi
 
+# Check if upstream branch is set
+upstream_branch=$(git rev-parse --abbrev-ref @{upstream} 2>/dev/null)
+
+if [ "$upstream_branch" == "" ]; then
+    # Set upstream branch
+    git push --set-upstream origin "$(git rev-parse --abbrev-ref HEAD)"
+fi
+
 git add .
 if [ -z "$message" ]; then
     git commit -m "from gits"
