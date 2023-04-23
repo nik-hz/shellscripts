@@ -4,8 +4,8 @@ message=$1
 
 git add .
 if [ -z "$message" ];then
-git commit -m 'from gits' .
+git commit -m "from gits" .
 else
-git commit -m '"$message"'
+git commit -m "$message" .
 fi
 git push
