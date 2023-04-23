@@ -2,7 +2,7 @@
 
 # Define function to print usage message
 usage() {
-  echo "Usage: $0 [-h] [-n <process_name>]"
+  echo "Usage: [-h] [-n <process_name>]"
   echo "Kills all processes with the given name"
   echo ""
   echo "Options:"

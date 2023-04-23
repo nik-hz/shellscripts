@@ -4,7 +4,12 @@
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit
 
 # Change permissions of all bash scripts in ./src to executable
-find ./src -type f -name "*.sh" -exec chmod +x {} \;
+if find ./src -type f -name "*" -exec chmod +x {} \;; then
+    echo "Executable permissions added to all bash scripts in $PWD/src"
+else
+    echo "Error: Failed to add executable permissions to bash scripts in ./src"
+    exit 1
+fi
 
 # Check if ./src is already in the PATH
 if echo "$PATH" | grep -q "$PWD/src"; then
