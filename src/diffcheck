@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# Initialize options
+executable1=""
+executable2=""
+commands_file=""
+
+# Define function to print usage message
+usage() {
+    echo "Usage: compare.sh -1 <executable1> -2 <executable2> -c <commands_file>"
+    echo ""
+    echo "Compare the output of two executables on a set of commands"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help     Show this help message and exit"
+    echo "  -1, --exec1    Path to the first executable"
+    echo "  -2, --exec2    Path to the second executable"
+    echo "  -c, --commands Path to the file containing the commands"
+}
+
+# Parse command-line options
+while getopts ":h1:2:c:" opt; do
+    case $opt in
+    h)
+        usage
+        exit 0
+        ;;
+    1)
+        executable1="$OPTARG"
+        ;;
+    2)
+        executable2="$OPTARG"
+        ;;
+    c)
+        commands_file="$OPTARG"
+        ;;
+    \?)
+        echo "Invalid option: -$OPTARG" >&2
+        usage
+        exit 1
+        ;;
+    :)
+        echo "Option -$OPTARG requires an argument" >&2
+        usage
+        exit 1
+        ;;
+    esac
+done
+
+# Check if required options are set
+if [ -z "$executable1" ] || [ -z "$executable2" ] || [ -z "$commands_file" ]; then
+    echo "Missing required arguments" >&2
+    usage
+    exit 1
+fi
+
+# Create output files
+output_file1="output1.txt"
+output_file2="output2.txt"
+
+while read -r cmd; do
+    # Ignore comments and blank lines
+    if [[ -n "$cmd" && ! "$cmd" =~ ^[[:space:]]*# ]]; then
+        # Run the command and save its output to the respective file
+        $executable1 $cmd >>"$output_file1" 2>&1
+        $executable2 $cmd >>"$output_file2" 2>&1
+    fi
+done < <(grep -v '^[[:space:]]*$\|^[[:space:]]*#' "$commands_file")
+
+# Run diff on the output files and output the result
+diff "$output_file1" "$output_file2"

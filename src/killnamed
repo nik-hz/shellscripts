@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Define function to print usage message
+usage() {
+  echo "Usage: [-h] [-n <process_name>]"
+  echo "Kills all processes with the given name"
+  echo ""
+  echo "Options:"
+  echo "  -h              Show this help message"
+  echo "  -n <process_name>  Specify the process name to kill"
+}
+
+# Parse command-line options
+while getopts ":hn:" opt; do
+  case $opt in
+  h)
+    usage
+    exit 0
+    ;;
+  n)
+    process_name="$OPTARG"
+    ;;
+  \?)
+    echo "Invalid option: -$OPTARG" >&2
+    usage
+    exit 1
+    ;;
+  :)
+    echo "Option -$OPTARG requires an argument" >&2
+    usage
+    exit 1
+    ;;
+  esac
+done
+
+# Check if the process name argument is given
+if [ -z "$process_name" ]; then
+  echo "Please provide a process name with the -n option"
+  usage
+  exit 1
+fi
+
+# Find the process IDs with the given name
+pids=$(ps -ef | grep "$process_name" | grep -v grep | awk '{print $2}')
+
+# If there are no matching processes, exit
+if [ -z "$pids" ]; then
+  echo "No processes found with the name '$process_name'"
+  exit 0
+fi
+
+# Kill all processes with the given name
+echo "Killing processes with the name '$process_name':"
+for pid in $pids; do
+  echo "  - Killing process $pid"
+  kill $pid
+done
+
+echo "Done."

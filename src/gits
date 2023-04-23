@@ -2,10 +2,63 @@
 
 message=$1
 
+# Define function to print usage message
+usage() {
+    echo "Usage: git-push [-h] [ -m <commit_message>]"
+    echo "Push changes to the upstream repository with the given message"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help  show this help message and exit"
+    echo "  -m, --message  add a custom commit message"
+    echo ""
+    echo "Arguments:"
+    echo "  <commit_message>  optional commit message for the changes"
+}
+
+# Parse command-line options
+while getopts ":hm:" opt; do
+    case $opt in
+    h)
+        usage
+        exit 0
+        ;;
+    m)
+        message="$OPTARG"
+        ;;
+    \?)
+        echo "Invalid option: -$OPTARG" >&2
+        usage
+        exit 1
+        ;;
+    :)
+        echo "Option -$OPTARG requires an argument" >&2
+        usage
+        exit 1
+        ;;
+    esac
+done
+
+# Check if upstream is present
+upstream=$(git remote -v | grep upstream | awk '{print $1}')
+
+if [ -z "$upstream" ]; then
+    # Add upstream remote
+    git remote add upstream \<upstream_url\>
+    echo "Added upstream remote"
+fi
+
+# Check if upstream branch is set
+upstream_branch=$(git rev-parse --abbrev-ref @{upstream} 2>/dev/null)
+
+if [ "$upstream_branch" == "" ]; then
+    # Set upstream branch
+    git push --set-upstream origin "$(git rev-parse --abbrev-ref HEAD)"
+fi
+
 git add .
-if [ -z "$message" ];then
-git commit -m "from gits" .
+if [ -z "$message" ]; then
+    git commit -m "from gits"
 else
-git commit -m "$message" .
+    git commit -m "$message"
 fi
 git push
