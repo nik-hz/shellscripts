@@ -3,9 +3,9 @@
 message=$1
 
 git add .
-if [ -z "$message" ];then
-git commit -m "from gits" .
+if [ -z "$message" ]; then
+    git commit -m "from gits" .
 else
-git commit -m "$message" .
+    git commit -m "$message" .
 fi
 git push
