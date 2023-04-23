@@ -55,10 +55,22 @@ if [ "$upstream_branch" == "" ]; then
     git push --set-upstream origin "$(git rev-parse --abbrev-ref HEAD)"
 fi
 
-git add .
 if [ -z "$message" ]; then
-    git commit -m "from gits"
-else
-    git commit -m "$message"
+    message="edited"
+    # Get files edited since last commit
+    files_edited=$(git diff --name-only HEAD)
+    if [ -n "$files_edited" ]; then
+        # Append to message
+        message+=" "
+        for file in $files_edited; do
+            message+="$file at $(date +"%T %D") "
+        done
+    else
+        # No files edited
+        message+=": No changes made"
+    fi
 fi
+
+git add .
+git commit -m "$message"
 git push
