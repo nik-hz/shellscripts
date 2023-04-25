@@ -42,11 +42,11 @@ multi() {
     echo ".PHONY: all clean"
     echo "all: \$(TARGET)"
     echo "\$(TARGET): \$(OBJS) \$(TARGET).c"
-    echo "	\$(CC) \$(OBJS) \$(TARGET).c -o \$(TARGET) \$(LDFLAGS)"
+    echo "  \$(CC) \$(OBJS) \$(TARGET).c -o \$(TARGET) \$(LDFLAGS)"
     echo "%.o: %.c %.h"
-    echo "	\$(CC) \$(CFLAGS) -c -o \$@ \$<"
+    echo "  \$(CC) \$(CFLAGS) -c -o \$@ \$<"
     echo "clean:"
-    echo "	rm -f \$(OBJS) \$(TARGET) \$(TARGET).exe"
+    echo "  rm -f \$(OBJS) \$(TARGET) \$(TARGET).exe"
 }
 
 # Parse command-line options
