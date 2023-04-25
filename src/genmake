@@ -1,0 +1,96 @@
+#!/bin/bash
+
+#function variables
+single=0
+multi=0
+name=""
+
+# Define function to print usage message
+usage() {
+    echo "Usage: genmake [-h] [-s] [-m <executable name>]"
+    echo "Create a single or multi source makefile"
+    echo ""
+    echo "Options:"
+    echo "  -h, --help  show this help message and exit"
+    echo "  -s, --single source"
+    echo "  -m, --multi source"
+    echo "Arguments:"
+    echo "  <executable namne> name of executable to insert in makefile"
+    echo ""
+}
+
+single() {
+    echo "CC     = gcc"
+    echo "C_FILE = \$(wildcard *.c)"
+    echo "TARGET = \$(patsubst %.c,%,\$(C_FILE))"
+    echo "CFLAGS = -g -Wall -Werror -pedantic-errors"
+    echo ""
+    echo "all:"
+    echo "	\$(CC) \$(CFLAGS) \$(C_FILE) -o \$(TARGET)"
+    echo "clean:"
+    echo "  rm -f \$(TARGET) \$(TARGET).exe"
+}
+
+multi() {
+    echo "CC      = gcc"
+    echo "TARGET  = $name"
+    echo "C_FILES = \$(filter-out \$(TARGET).c, \$(wildcard *.c))"
+    echo "OBJS    = \$(patsubst %.c,%.o,\$(C_FILES))"
+    echo "CFLAGS  = -g -Wall -Werror -pedantic-errors"
+    echo "LDFLAGS ="
+    echo ""
+    echo ".PHONY: all clean"
+    echo "all: \$(TARGET)"
+    echo "\$(TARGET): \$(OBJS) \$(TARGET).c"
+    echo "	\$(CC) \$(OBJS) \$(TARGET).c -o \$(TARGET) \$(LDFLAGS)"
+    echo "%.o: %.c %.h"
+    echo "	\$(CC) \$(CFLAGS) -c -o \$@ \$<"
+    echo "clean:"
+    echo "	rm -f \$(OBJS) \$(TARGET) \$(TARGET).exe"
+}
+
+# Parse command-line options
+while getopts ":hsm:" opt; do
+    case $opt in
+    h)
+        usage
+        exit 0
+        ;;
+    s)
+        single=1
+        ;;
+    m)
+        multi=1
+        name="$OPTARG"
+        ;;
+    \?)
+        echo "Invalid option: -$OPTARG" >&2
+        usage
+        exit 1
+        ;;
+    :)
+        echo "Option -$OPTARG requires an argument" >&2
+        usage
+        exit 1
+        ;;
+    esac
+done
+
+if [[ $single -eq 1 && $multi -eq 1 ]]; then
+    echo "Error: Cannot use both -s and -m options at the same time" >&2
+    usage
+    exit 1
+elif [[ $single -eq 0 && $multi -eq 0 ]]; then
+    echo "Default: Single source makefile" >&2
+    single >Makefile
+    echo "Makefile generated successfully!"
+    exit 0
+fi
+
+if [[ $single -eq 1 ]]; then
+    single
+else
+    multi
+fi >Makefile
+
+echo "Makefile generated successfully!"
