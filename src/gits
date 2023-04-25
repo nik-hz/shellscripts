@@ -4,7 +4,7 @@ message=$1
 
 # Define function to print usage message
 usage() {
-    echo "Usage: git-push [-h] [ -m <commit_message>]"
+    echo "Usage: gits [-h] [ -m <commit_message>]"
     echo "Push changes to the upstream repository with the given message"
     echo ""
     echo "Options:"
