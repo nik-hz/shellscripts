@@ -2,16 +2,17 @@
 
 # Define function to print usage message
 usage() {
-  echo "Usage: [-h] [-n <process_name>]"
+  echo "Usage: [-h] [-n <process_name>] [-s [signal]]"
   echo "Kills all processes with the given name"
   echo ""
   echo "Options:"
   echo "  -h              Show this help message"
   echo "  -n <process_name>  Specify the process name to kill"
+  echo "  -s [signal]  Specify the signal"
 }
 
 # Parse command-line options
-while getopts ":hn:" opt; do
+while getopts ":hn:s:" opt; do
   case $opt in
   h)
     usage
@@ -19,6 +20,9 @@ while getopts ":hn:" opt; do
     ;;
   n)
     process_name="$OPTARG"
+    ;;
+  s)
+    signal="$OPTARG"
     ;;
   \?)
     echo "Invalid option: -$OPTARG" >&2
@@ -40,6 +44,12 @@ if [ -z "$process_name" ]; then
   exit 1
 fi
 
+if [ -z "$signal" ]; then
+  echo "Please provide a signal with the -s option"
+  usage
+  exit 1
+fi
+
 # Find the process IDs with the given name
 pids=$(ps -ef | grep "$process_name" | grep -v grep | awk '{print $2}')
 
@@ -53,7 +63,7 @@ fi
 echo "Killing processes with the name '$process_name':"
 for pid in $pids; do
   echo "  - Killing process $pid"
-  kill $pid
+  kill -"$signal" "$pid"
 done
 
 echo "Done."

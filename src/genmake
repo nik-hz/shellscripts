@@ -28,7 +28,7 @@ single() {
     echo "all:"
     echo "	\$(CC) \$(CFLAGS) \$(C_FILE) -o \$(TARGET)"
     echo "clean:"
-    echo "  rm -f \$(TARGET) \$(TARGET).exe"
+    echo -e "\trm -f \$(TARGET) \$(TARGET).exe"
 }
 
 multi() {
@@ -46,7 +46,7 @@ multi() {
     echo "%.o: %.c %.h"
     echo "  \$(CC) \$(CFLAGS) -c -o \$@ \$<"
     echo "clean:"
-    echo "  rm -f \$(OBJS) \$(TARGET) \$(TARGET).exe"
+    echo -e "\trm -f \$(TARGET) \$(TARGET).exe"
 }
 
 # Parse command-line options

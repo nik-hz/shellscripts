@@ -22,7 +22,7 @@ else
 fi
 
 # Delete the directory ./shellscripts
-if rm -rf ./shellscripts; then
+if rm -rf ../shellscripts; then
     echo "Directory $PWD/shellscripts deleted"
 else
     echo "Error: Failed to delete directory $PWD/shellscripts"
